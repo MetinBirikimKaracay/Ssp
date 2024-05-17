@@ -1,13 +1,16 @@
 package com.example.ssp.common
 
 import android.app.ActivityManager
+import android.app.AlertDialog
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.example.ssp.MainViewModel
 import com.example.ssp.R
 
 const val notificationID = 121
@@ -16,6 +19,7 @@ const val titleExtra = "titleExtra"
 const val messageExtra = "messageExtra"
 
 class Notification : BroadcastReceiver() {
+    private var mainViewModel = MainViewModel()
     override fun onReceive(context: Context, intent: Intent) {
         if (isAppInBackground(context)) {
             val packageName = context.packageName
@@ -42,6 +46,10 @@ class Notification : BroadcastReceiver() {
 
             val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.notify(notificationID, notification)
+        } else {
+            Log.e("MainActivityLogu2", "showAlertDialogLiveEvent")
+            mainViewModel.showDialog()
+            //showNotificationDialog(context, intent)
         }
     }
 
@@ -55,5 +63,16 @@ class Notification : BroadcastReceiver() {
             }
         }
         return true
+    }
+
+    private fun showNotificationDialog(context: Context, intent: Intent) {
+        val dialogBuilder = AlertDialog.Builder(context)
+        dialogBuilder.setMessage(intent.getStringExtra(messageExtra))
+            .setCancelable(false)
+            .setPositiveButton("Tamam") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
     }
 }

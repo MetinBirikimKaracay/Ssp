@@ -51,6 +51,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         handleViewOptions()
+        checkNotificationPermissions(requireContext())
         with(profileViewModel) {
             profilePageViewStateLiveData.observe(viewLifecycleOwner) {
                 with(binding) {
@@ -72,9 +73,22 @@ class ProfileFragment : Fragment() {
                 //checkNotificationPermissions(requireContext())
             }
         }
+        mainViewModel.showAlertDialogLiveEvent.observe(viewLifecycleOwner) {
+            Log.e("MainActivityLogu3", "showAlertDialogLiveEvent")
+            showNotificationDialog()
+        }
     }
 
-    /*private fun scheduleNotification() {
+    private fun showNotificationDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Bildirim İzni")
+        builder.setMessage("Bir sonraki çark çevirme işleminizde bildirim almak ister misiniz?")
+        builder.setPositiveButton("İzin Ver") { _, _ ->
+        }
+        builder.create().show()
+    }
+
+    private fun scheduleNotification() {
         val intent = Intent(requireContext(), com.example.ssp.common.Notification::class.java)
 
         val title = "Su içme Zamanı!"
@@ -97,7 +111,7 @@ class ProfileFragment : Fragment() {
             time,
             pendingIntent
         )
-    }*/
+    }
     /*private fun scheduleNotification() {
         val intent = Intent(requireContext(), com.example.ssp.common.Notification::class.java)
 
@@ -115,16 +129,16 @@ class ProfileFragment : Fragment() {
         )
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val time =  1000L // 5 saniye sonra
+        val time =  1000L * 10 // 5 saniye sonra
 
         alarmManager.setInexactRepeating(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
-            time,//SystemClock.elapsedRealtime() + time,
+            SystemClock.elapsedRealtime() + time,
             time,
             pendingIntent
         )
     }*/
-    @SuppressLint("ShortAlarm")
+    /*@SuppressLint("ShortAlarm")
     private fun scheduleNotification() {
         val intent = Intent(requireContext(), com.example.ssp.common.Notification::class.java)
 
@@ -142,7 +156,7 @@ class ProfileFragment : Fragment() {
         )
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val time = 1000L
+        val time = 1000L * 10
 
         alarmManager.setRepeating(
             AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -150,8 +164,7 @@ class ProfileFragment : Fragment() {
             time,
             pendingIntent
         )
-    }
-
+    }*/
 
     private fun getTime(): Long {
         val calendar = Calendar.getInstance()
@@ -185,7 +198,7 @@ class ProfileFragment : Fragment() {
     private fun requestNotificationPermission(context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Bildirim İzni")
-        builder.setMessage("Bir sonraki çark çevirme işleminizde bildirim almak ister misiniz?")
+        builder.setMessage("Su içmeniz gerektiğini hatırlatabilmemiz için bildirim almak ister misiniz?")
         builder.setPositiveButton("İzin Ver") { _, _ ->
             openNotificationSettings(context)
         }

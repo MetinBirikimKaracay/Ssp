@@ -1,10 +1,12 @@
 package com.example.ssp
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.ssp.common.messageExtra
 import com.example.ssp.common.navigation.NavigationData
 import com.example.ssp.databinding.ActivityMainBinding
 
@@ -32,5 +34,16 @@ class MainActivity : AppCompatActivity() {
     }
     private fun navigateToDestination(navController: NavController, navigationData: NavigationData) {
         navController.navigate(navigationData.destinationId)
+    }
+
+    private fun showNotificationDialog() {
+        val dialogBuilder = AlertDialog.Builder(applicationContext)
+        dialogBuilder.setMessage(intent.getStringExtra(messageExtra))
+            .setCancelable(false)
+            .setPositiveButton("Tamam") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
     }
 }
