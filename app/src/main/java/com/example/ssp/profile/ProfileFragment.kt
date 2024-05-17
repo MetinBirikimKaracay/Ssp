@@ -1,5 +1,6 @@
 package com.example.ssp.profile
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.NotificationChannel
@@ -10,6 +11,9 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.example.ssp.MainViewModel
 import com.example.ssp.common.channelID
 import com.example.ssp.common.messageExtra
@@ -28,7 +33,15 @@ import java.util.Calendar
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private val mainViewModel: MainViewModel by activityViewModels()
-    private lateinit var sharedPreferences: SharedPreferences
+    private val profileViewModel: ProfileViewModel by viewModels()
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val notificationRunnable = object : Runnable {
+        override fun run() {
+            scheduleNotification()
+            handler.postDelayed(this, 5000)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
@@ -38,25 +51,30 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         handleViewOptions()
+        with(profileViewModel) {
+            profilePageViewStateLiveData.observe(viewLifecycleOwner) {
+                with(binding) {
+                    viewState = it
+                    executePendingBindings()
+                }
+            }
 
+            val sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            fillProfileData(sharedPreferences)
+        }
     }
 
     private fun handleViewOptions() {
         with(binding) {
-            buttonGetProfile.setOnClickListener {
-                sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-                val savedAge = sharedPreferences.getString("age", "")
-                val savedWeight = sharedPreferences.getString("weight", "")
-                val savedHeight = sharedPreferences.getString("height", "")
-
-                Log.i("ProfileFragment", "Saved age: $savedAge, saved weight: $savedWeight, saved height: $savedHeight")
+            buttonProfile.setOnClickListener {
+                mainViewModel.onEditProfileFragmentButtonClick()
                 createNotificationChannel()
-                checkNotificationPermissions(requireContext())
+                //checkNotificationPermissions(requireContext())
             }
         }
     }
 
-    private fun scheduleNotification() {
+    /*private fun scheduleNotification() {
         val intent = Intent(requireContext(), com.example.ssp.common.Notification::class.java)
 
         val title = "Su içme Zamanı!"
@@ -79,7 +97,61 @@ class ProfileFragment : Fragment() {
             time,
             pendingIntent
         )
+    }*/
+    /*private fun scheduleNotification() {
+        val intent = Intent(requireContext(), com.example.ssp.common.Notification::class.java)
+
+        val title = "Su içme Zamanı!"
+        val message = "Su içmeyi unutmayın!"
+
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            notificationID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val time =  1000L // 5 saniye sonra
+
+        alarmManager.setInexactRepeating(
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            time,//SystemClock.elapsedRealtime() + time,
+            time,
+            pendingIntent
+        )
+    }*/
+    @SuppressLint("ShortAlarm")
+    private fun scheduleNotification() {
+        val intent = Intent(requireContext(), com.example.ssp.common.Notification::class.java)
+
+        val title = "Su içme Zamanı!"
+        val message = "Su içmeyi unutmayın!"
+
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            notificationID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val time = 1000L
+
+        alarmManager.setRepeating(
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            time,//SystemClock.elapsedRealtime() + time,
+            time,
+            pendingIntent
+        )
     }
+
 
     private fun getTime(): Long {
         val calendar = Calendar.getInstance()

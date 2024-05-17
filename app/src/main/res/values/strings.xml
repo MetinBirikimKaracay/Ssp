@@ -3,4 +3,8 @@
     <string name="hint_age">Yaşınız</string>
     <string name="hint_weight">Kilonuz</string>
     <string name="hint_height">Boyunuz</string>
+    <string name="button_save">Kaydet</string>
+    <string name="fill_all_fields">Lütfen tüm alanları doldurunuz</string>
+    <string name="fill_profile">Profili Doldur</string>
+    <string name="update_profile">Bilgilerini Güncelle</string>
 </resources>

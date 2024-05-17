@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewState"
+            type="com.example.ssp.editProfile.EditProfilePageViewState" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:hint="@string/hint_age"
+                android:text="@{viewState.userAge}"
                 android:layout_marginTop="24dp"/>
 
             <EditText
@@ -28,6 +35,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:hint="@string/hint_weight"
+                android:text="@{viewState.userWeight}"
+                android:imeOptions="actionDone"
                 android:layout_marginTop="16dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -37,13 +46,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                 <AutoCompleteTextView
-                    android:id="@+id/height"
+                    android:id="@+id/heightDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_height"
                     android:inputType="none"
                     android:layout_marginTop="16dp"
                     android:dropDownHeight="300dp"
+                    android:text="@{viewState.userHeight}"
                     tools:hint="@string/hint_height"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -51,7 +61,7 @@
                 android:id="@+id/buttonSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Kaydet"
+                android:text="@{viewState.buttonText(context)}"
                 android:layout_marginTop="24dp"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

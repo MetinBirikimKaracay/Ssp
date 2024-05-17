@@ -32,11 +32,11 @@ class Notification : BroadcastReceiver() {
             val pendingIntent = PendingIntent.getActivity(context, 0, tapIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             val notification = NotificationCompat.Builder(context, channelID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setContentTitle(intent.getStringExtra(titleExtra))
                 .setContentText(intent.getStringExtra(messageExtra))
                 .setContentIntent(pendingIntent)
-                .setColor(ContextCompat.getColor(context, androidx.appcompat.R.color.material_blue_grey_800))
+                .setColor(ContextCompat.getColor(context, R.color.white))
                 .setAutoCancel(true)
                 .build()
 

@@ -13,4 +13,8 @@ class MainViewModel: ViewModel() {
     fun onEditProfileFragmentButtonClick() {
         _navigateToDestinationComponentSingleLiveEvent.value = NavigationData(R.id.editProfileFragment)
     }
+
+    fun onProfileFragmentButtonClick() {
+        _navigateToDestinationComponentSingleLiveEvent.value = NavigationData(R.id.profileFragment)
+    }
 }
